@@ -37,12 +37,6 @@ job "sockshop" {
         }
       }
 
-      service {
-        name = "front-end"
-        tags = ["app", "frontend", "front-end"]
-        port = "http"
-      }
-
       resources {
         cpu = 100 # 100 Mhz
         memory = 128 # 128MB
@@ -84,12 +78,6 @@ job "sockshop" {
         }
       }
 
-      service {
-        name = "user"
-        tags = ["app", "user"]
-        port = "http"
-      }
-
       resources {
         cpu = 100 # 100 Mhz
         memory = 256 # 256MB
@@ -111,12 +99,6 @@ job "sockshop" {
         port_map = {
           http = 27017
         }
-      }
-
-      service {
-        name = "user-db"
-        tags = ["db", "user", "user-db"]
-        port = "http"
       }
 
       resources {
@@ -152,12 +134,6 @@ job "sockshop" {
         port_map = {
           http = 80
         }
-      }
-
-      service {
-        name = "catalogue"
-        tags = ["app", "catalogue"]
-        port = "http"
       }
 
       resources {
@@ -200,12 +176,6 @@ job "sockshop" {
         MYSQL_ALLOW_EMPTY_PASSWORD = "false"
       }
 
-      service {
-        name = "catalogue-db"
-        tags = ["db", "catalogue", "catalogue-db"]
-        port = "http"
-      }
-
       resources {
         cpu = 100 # 100 Mhz
         memory = 256 # 256MB
@@ -246,12 +216,6 @@ job "sockshop" {
         }
       }
 
-      service {
-        name = "carts"
-        tags = ["app", "carts"]
-        port = "http"
-      }
-
       resources {
         cpu = 100 # 100 Mhz
         memory = 1024 # 1024MB
@@ -273,12 +237,6 @@ job "sockshop" {
         port_map = {
           http = 27017
         }
-      }
-
-      service {
-        name = "carts-db"
-        tags = ["db", "carts", "carts-db"]
-        port = "http"
       }
 
       resources {
@@ -320,12 +278,6 @@ job "sockshop" {
         }
       }
 
-      service {
-        name = "shipping"
-        tags = ["app", "shipping"]
-        port = "http"
-      }
-
       resources {
         cpu = 100 # 100 Mhz
         memory = 1024 # 1024MB
@@ -359,12 +311,6 @@ job "sockshop" {
         port_map = {
           http = 80
         }
-      }
-
-      service {
-        name = "payment"
-        tags = ["app", "payment"]
-        port = "http"
       }
 
       resources {
@@ -408,12 +354,6 @@ job "sockshop" {
         }
       }
 
-      service {
-        name = "orders"
-        tags = ["app", "orders"]
-        port = "http"
-      }
-
       resources {
         cpu = 100 # 100 Mhz
         memory = 1024 # 1024MB
@@ -435,12 +375,6 @@ job "sockshop" {
 	      port_map = {
 	         http = 27017
 	      }
-      }
-
-      service {
-        name = "orders-db"
-        tags = ["db", "orders", "orders-db"]
-        port = "http"
       }
 
       resources {
@@ -482,12 +416,6 @@ job "sockshop" {
         }
       }
 
-      service {
-        name = "queue-master"
-        tags = ["app", "queue-master"]
-        port = "http"
-      }
-
       resources {
         cpu = 100 # 100 Mhz
         memory = 1024 # 1024MB
@@ -521,12 +449,6 @@ job "sockshop" {
 	      port_map = {
           http = 5672
         }
-      }
-
-      service {
-        name = "rabbitmq"
-        tags = ["message-broker", "rabbitmq"]
-        port = "http"
       }
 
       resources {
