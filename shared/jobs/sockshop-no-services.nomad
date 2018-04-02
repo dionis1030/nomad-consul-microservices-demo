@@ -1,4 +1,4 @@
-job "sockshop" {
+job "sockshop-no-services" {
   datacenters = ["dc1"]
 
   constraint {
