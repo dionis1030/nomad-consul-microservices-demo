@@ -87,6 +87,18 @@ job "sockshop-short-names" {
           http = 80
         }
       }
+      
+      vault {
+        policies = ["sockshop-read"]
+      }
+
+      template {
+        data = <<EOH
+        MONGO_PASS="{{with secret "secret/sockshop/database/passwords" }}{{.Data.userdb}}{{end}}"
+        EOH
+        destination = "secrets/user_db.env"
+        env = true
+      }
 
       service {
         name = "user"
@@ -115,6 +127,18 @@ job "sockshop-short-names" {
         port_map = {
           http = 27017
         }
+      }
+
+      vault {
+        policies = ["sockshop-read"]
+      }
+
+      template {
+        data = <<EOH
+        MONGO_PASS="{{with secret "secret/sockshop/database/passwords" }}{{.Data.userdb}}{{end}}"
+        EOH
+        destination = "secrets/user_db.env"
+        env = true
       }
 
       service {

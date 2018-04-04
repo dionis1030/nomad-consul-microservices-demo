@@ -18,6 +18,11 @@ CLUSTER_TAG_VALUE=$2
 SERVER_IP=$3
 VAULT_URL=$4
 
+# Install Java and queue-master.jar
+sudo apt install -y default-jre
+#mkdir -p /home/ubuntu/jars
+#cp /ops/shared/jars/* /home/ubuntu/jars
+
 # Consul
 sed -i "s/IP_ADDRESS/$IP_ADDRESS/g" $CONFIGDIR/consul_client.json
 sed -i "s/CLUSTER_TAG_VALUE/$CLUSTER_TAG_VALUE/g" $CONFIGDIR/consul_upstart.conf
@@ -54,11 +59,6 @@ echo "search service.consul" | sudo tee --append /etc/resolv.conf
 # Set env vars for tool CLIs
 echo "export VAULT_ADDR=$VAULT_URL" | sudo tee --append /home/$HOME_DIR/.bashrc
 echo "export NOMAD_ADDR=http://$IP_ADDRESS:4646" | sudo tee --append /home/$HOME_DIR/.bashrc
-
-# Install Java and queue-master.jar
-sudo apt install -y default-jre
-mkdir -p /home/ubuntu/jars
-cp /ops/shared/jars/* /home/ubuntu/jars
 
 # Move daemon.json to /etc/docker
 sudo echo "{\"hosts\":[\"tcp://0.0.0.0:2375\",\"unix:///var/run/docker.sock\"],\"cluster-store\":\"consul://$IP_ADDRESS:8500\",\"cluster-advertise\":\"$IP_ADDRESS:2375\",\"dns\":[\"$IP_ADDRESS\"],\"dns-search\":[\"service.consul\"]}" > /home/ubuntu/daemon.json

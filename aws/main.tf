@@ -1,4 +1,10 @@
-provider "vault" {}
+terraform {
+  required_version = ">= 0.11.3"
+}
+
+provider "vault" {
+  address = "${var.vault_url}"
+}
 
 data "vault_generic_secret" "aws_auth" {
   path = "aws-tf/creds/deploy"

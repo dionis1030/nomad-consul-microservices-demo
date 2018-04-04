@@ -510,12 +510,18 @@ job "sockshop-qm-java" {
 
     # - app - #
     task "queue-master" {
-      driver = "raw_exec"
+      driver = "java"
 
       config {
-        command = "/usr/bin/java"
-        args = ["-jar", "/home/ubuntu/jars/queue-master.jar", "--port=8099", "--spring.rabbitmq.host=${attr.unique.network.ip-address}"]
+        jar_path = "local/queue-master.jar"
+        jvm_options = ["-Xms512m", "-Xmx512m"]
+        args = ["--port=8099", "--spring.rabbitmq.host=${attr.unique.network.ip-address}"]
       }
+
+      artifact {
+        source = "https://s3.amazonaws.com/nomad-consul-demo/queue-master.jar"
+      }
+
 
       service {
         name = "queue-master"

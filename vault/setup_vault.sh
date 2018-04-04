@@ -26,6 +26,12 @@ vault write ssh-nomad/roles/otp_nomad key_type=otp default_user=root cidr_list=1
 echo "Writing the ssh_policy.hcl to Vault"
 vault policy write ssh_policy ssh_policy.hcl
 
+# Create sockshop-read policy
+vault policy write sockshop-read sockshop-read.hcl
+
+# Write the userdb password to Vault
+vault write secret/sockshop/database/passwords userdb=dioe93kdo93
+
 # Setup Vault policy/role for Nomad
 echo "Setting up Vault policy and role for Nomad"
 echo "Writing nomad-server-policy.hcl to Vault"

@@ -5,6 +5,7 @@ variable "region" {
 
 variable "ami" {
   description = "AMI ID"
+  default = "ami-05f6402cb4229d253"
 }
 
 variable "vpc_id" {
@@ -22,19 +23,19 @@ variable "server_instance_type" {
 
 variable "client_instance_type" {
   description = "The AWS instance type to use for clients."
-  default     = "t2.large"
+  default     = "t2.medium"
 }
 
 variable "key_name" {}
 
 variable "server_count" {
   description = "The number of servers to provision."
-  default     = "3"
+  default     = "1"
 }
 
 variable "client_count" {
   description = "The number of clients to provision."
-  default     = "4"
+  default     = "2"
 }
 
 variable "name_tag_prefix" {
@@ -44,7 +45,7 @@ variable "name_tag_prefix" {
 
 variable "cluster_tag_value" {
   description = "Used by Consul to automatically form a cluster."
-  default     = "auto-join"
+  default     = "nomad-consul-demo"
 }
 
 variable "owner_tag_value" {
