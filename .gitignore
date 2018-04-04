@@ -1,4 +1,5 @@
 terraform.tfstate*
 .terraform
 Notes*
-.DS_Store
+*.DS_Store
+terraform.tfvars
