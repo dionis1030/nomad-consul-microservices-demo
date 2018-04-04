@@ -15,6 +15,10 @@ job "sockshop" {
   group "frontend" {
     count = 2
 
+    constraint {
+      distinct_hosts = true
+    }
+
     restart {
       attempts = 10
       interval = "5m"

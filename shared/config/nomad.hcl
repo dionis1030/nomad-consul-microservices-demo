@@ -20,3 +20,8 @@ vault {
   create_from_role = "nomad-cluster"
   token = "TOKEN_FOR_NOMAD"
 }
+
+telemetry {
+  publish_allocation_metrics = true
+  publish_node_metrics       = true
+}

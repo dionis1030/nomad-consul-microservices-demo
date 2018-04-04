@@ -13,7 +13,11 @@ job "sockshop-qm-java" {
 
   # - frontend #
   group "frontend" {
-    count = 2
+    count = 3
+
+    constraint {
+      distinct_hosts = true
+    }
 
     restart {
       attempts = 10
@@ -84,6 +88,18 @@ job "sockshop-qm-java" {
         }
       }
 
+      vault {
+        policies = ["sockshop-read"]
+      }
+
+      template {
+        data = <<EOH
+        MONGO_PASS="{{with secret "secret/sockshop/database/passwords" }}{{.Data.userdb}}{{end}}"
+        EOH
+        destination = "secrets/user_db.env"
+        env = true
+      }
+
       service {
         name = "user"
         tags = ["app", "user"]
@@ -111,6 +127,18 @@ job "sockshop-qm-java" {
         port_map = {
           http = 27017
         }
+      }
+
+      vault {
+        policies = ["sockshop-read"]
+      }
+
+      template {
+        data = <<EOH
+        MONGO_PASS="{{with secret "secret/sockshop/database/passwords" }}{{.Data.userdb}}{{end}}"
+        EOH
+        destination = "secrets/user_db.env"
+        env = true
       }
 
       service {
