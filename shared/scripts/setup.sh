@@ -1,7 +1,6 @@
 #!/bin/bash
 
 set -e
-
 cd /ops
 
 CONFIGDIR=/ops/shared/config

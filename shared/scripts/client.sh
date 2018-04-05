@@ -20,8 +20,6 @@ VAULT_URL=$4
 
 # Install Java and queue-master.jar
 sudo apt install -y default-jre
-#mkdir -p /home/ubuntu/jars
-#cp /ops/shared/jars/* /home/ubuntu/jars
 
 # Consul
 sed -i "s/IP_ADDRESS/$IP_ADDRESS/g" $CONFIGDIR/consul_client.json

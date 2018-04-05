@@ -84,5 +84,5 @@ sudo chmod  666 /home/ubuntu/*
 sudo service nomad start
 
 # Run Sock Shop job
-#sleep 30
-#nomad run /home/$HOME_DIR/sockshop.nomad
+sleep 60
+nomad run /home/$HOME_DIR/sockshop.nomad

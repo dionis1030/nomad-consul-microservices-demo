@@ -1,4 +1,4 @@
-job "sockshop-qm-java" {
+job "sockshop" {
   datacenters = ["dc1"]
 
   constraint {
