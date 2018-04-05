@@ -73,7 +73,7 @@ vault write auth/token/roles/nomad-cluster @nomad-cluster-role.json
 ## Provisioning AWS EC2 instances with Packer and Terraform
 You can now use Packer and Terraform to provision your AWS EC2 instances. Terraform has already been configured to retrieve AWS credentials from your Vault server which has been configured to dynamically generate short-lived AWS keys for Terraform.
 
-I've already used Packer to create Amazon Machine Image ami-0409f240c51e6e2cc which uses Nomad 0.7.1 and Consul 1.0.6. You can use this as the basis for your EC2 instances. This AMI only exists in the AWS us-east-1 region. If you want to create a similar AMI in a different region or if you make any changes to any of the files in the shared directory, you will need to create your own AMI with Packer. This is very simple. Starting from the home directory, do the following (being sure to specify the region in packer.json if different from us-east-1):
+I've already used Packer to create Amazon Machine Image ami-0b4530d5e3f518f2a which uses Nomad 0.7.1 and Consul 1.0.6. You can use this as the basis for your EC2 instances. This AMI only exists in the AWS us-east-1 region. If you want to create a similar AMI in a different region or if you make any changes to any of the files in the shared directory, you will need to create your own AMI with Packer. This is very simple. Starting from the home directory, do the following (being sure to specify the region in packer.json if different from us-east-1):
 ```
 cd aws/packer
 packer build packer.json
@@ -88,18 +88,17 @@ Additionally, you need to set the VAULT_TOKEN environment variable to a Vault to
 You also need to generate a Vault token for Nomad by running
 `vault token create -policy nomad-server -period 72h -orphan | sed -e '1,2d' | sed -e '2,6d' | sed 's/ //g' | sed 's/token//'`. Edit the terraform.tfvars file and replace "TOKEN_FOR_NOMAD" with this token.
 
-Now, you're ready to use Terraform to provision your EC2 instances.  The current configuration creates 1 Server instance running Nomad and Consul servers and 2 Client instances running Nomad and Consul clients. Your Sock Shop apps will be deployed by Nomad to the Client instances.
+Now, you're ready to use Terraform to provision your EC2 instances.  The default configuration creates 1 Server instance running Nomad and Consul servers and 2 Client instances running Nomad and Consul clients. Your Sock Shop apps will be deployed by Nomad to the Client instances. If running t2.medium instances, you need a minimum of 2 clients to run all the Sock Shop microservices.
 
 1. Run `terraform init` to initialize your Terraform configuration.
-1. Run `terraform plan` to validate your Terraform configuration. You should see a message at the end saying that Terraform found 7 objects to add, 0 to change, and 0 to destroy.
-1. Run `terraform apply` to provision your infrastructure. When this finishes, you should see a message giving the public and private IP addresses for all 3 instances.  Write these down for later reference. In your AWS console, you should be able to see all 3 instances under EC2 Instances. If you were already on that screen, you'll need to refresh it.
+1. Run `terraform apply` to provision your infrastructure. Note that in newer versions of Terraform, the apply command actually first does a plan and then prompts you to confirm that you want to apply. Type "yes" to apply. When the apply finishes, you should see a message giving the public and private IP addresses for all your server and client instances.  Write these down for later reference. In your AWS console, you should be able to see all your instances under EC2 Instances. If you were already on that screen, you'll need to refresh it.
 
 ## Connecting to your EC2 instances
 From a directory containing your private EC2 key pair, you can connect to your Nomad server with `ssh -i <key> ubuntu@<server_public_ip>`, replacing \<key\> with your actual private key file (ending in ".pem") and \<server_public_ip\> with the public IP of your server instance.
 
-After connecting, if you run the `pwd` command, you will see that you are in the /home/ubuntu directory. If you run the `ls` command, you should see the file sockshop.nomad and possibly some other variations on it.
+After connecting, if you run the `pwd` command, you will see that you are in the /home/ubuntu directory. If you run the `ls` command, you should see the file sockshop.nomad. If you run `consul members`, you should see all of the server and client instances.
 
-Please do connect to your server instance before continuing. You might also want to connect to one of your client instances too, using one of the public client IP addresses.
+Please do connect to one of your server instances before continuing. You might also want to connect to one of your client instances too, using one of the public client IP addresses.
 
 
 ## Verification Steps
@@ -115,18 +114,18 @@ Note that the queue-master task is launched with the Java driver and that the qu
 You can check the status of the sockshop job on any of the servers or clients by running `nomad status sockshop`.  Please do this a few times until all of the task groups are running.
 
 ## Using the Sock Shop application
-You should now be able to access the Sock Shop UI with a browser on your laptop.  Just point your browser against http://<client_ip>, replacing \<client_ip\> with either of the client instance public IP addresses.
+You should now be able to access the Sock Shop UI with a browser on your laptop.  Just point your browser against http://<client_ip>, replacing \<client_ip\> with any of the client instance public IP addresses.
 
 You can login to the Sock Shop as "Eve_Berger" with password "eve".  You can then browse through the catalogue, add some socks to your shopping cart, checkout, and view your order.
 
 ![Screenshot](SockShopApp.png)
 
 ## Checking the Services with Consul UI
-You can access the Consul UI by pointing your browser to http://<server_ip>:8500, replacing \<server_ip\> with your server's public IP address. You can verify that all of the Sock Shop microservices are registered with Consul and easily determine which of the client instances the different services are running on.  Note that the current configuration runs 2 instances of front-end (the UI) and 1 instance of all the other Sock Shop microservices.
+You can access the Consul UI by pointing your browser to http://<server_ip>:8500, replacing \<server_ip\> with the public IP address of one of your servers . You can verify that all of the Sock Shop microservices are registered with Consul and easily determine which of the client instances the different services are running on.
 
 ![Screenshot](ConsulUI.png)
 
 ## Checking the Running Tasks with Nomad UI
-You can access the Nomad UI by pointing your browser to http://<server_ip>:4646, replacing \<server_ip\> with your server's public IP address. You can verify that all of the Sock Shop microservices are running as Nomad tasks and easily determine which of the client instances the different tasks are running on.
+You can access the Nomad UI by pointing your browser to http://<server_ip>:4646, replacing \<server_ip\> with the public IP address of one of your servers. You can verify that all of the Sock Shop microservices are running as Nomad tasks and easily determine which of the client instances the different tasks are running on.
 
 ![Screenshot](NomadUI.png)
