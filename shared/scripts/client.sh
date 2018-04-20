@@ -55,6 +55,7 @@ sudo mv /etc/resolv.conf.new /etc/resolv.conf
 echo "search service.consul" | sudo tee --append /etc/resolv.conf
 
 # Set env vars for tool CLIs
+echo "export CONSUL_HTTP_ADDR=$IP_ADDRESS:8500" | sudo tee --append /home/$HOME_DIR/.bashrc
 echo "export VAULT_ADDR=$VAULT_URL" | sudo tee --append /home/$HOME_DIR/.bashrc
 echo "export NOMAD_ADDR=http://$IP_ADDRESS:4646" | sudo tee --append /home/$HOME_DIR/.bashrc
 
