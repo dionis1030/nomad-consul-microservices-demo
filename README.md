@@ -54,6 +54,9 @@ vault secrets enable -path=ssh-nomad ssh
 vault write ssh-nomad/roles/otp_nomad key_type=otp default_user=root cidr_list=172.17.0.0/24
 vault policy write ssh_policy ssh_policy.hcl
 ```
+
+If you want, test that you can dynamically generate a password by running `vault write ssh-nomad/creds/otp_nomad ip=172.17.0.1`.
+
 ### Create sockshop-read policy and write the userdb password
 Nomad will fetch the userdb password from Vault. We first create a Vault policy to allow that and then write the password to the userdb key of the secret/sockshop/database/passwords path. You can set any password you want.
 
@@ -73,8 +76,10 @@ vault write auth/token/roles/nomad-cluster @nomad-cluster-role.json
 ## Provisioning AWS EC2 instances with Packer and Terraform
 You can now use Packer and Terraform to provision your AWS EC2 instances. Terraform has already been configured to retrieve AWS credentials from your Vault server which has been configured to dynamically generate short-lived AWS keys for Terraform.
 
-I've already used Packer to create Amazon Machine Image ami-0b4530d5e3f518f2a which uses Nomad 0.7.1 and Consul 1.0.6. You can use this as the basis for your EC2 instances. This AMI only exists in the AWS us-east-1 region. If you want to create a similar AMI in a different region or if you make any changes to any of the files in the shared directory, you will need to create your own AMI with Packer. This is very simple. Starting from the home directory, do the following (being sure to specify the region in packer.json if different from us-east-1):
+I've already used Packer to create Amazon Machine Image ami-0e82fb35c59ab4895 which uses Nomad 0.7.1 and Consul 1.0.6. You can use this as the basis for your EC2 instances. This AMI only exists in the AWS us-east-1 region. If you want to create a similar AMI in a different region or if you make any changes to any of the files in the shared directory, you will need to create your own AMI with Packer. This is very simple. Starting from the home directory, do the following (being sure to specify the region in packer.json if different from us-east-1):
 ```
+export AWS_ACCESS_KEY_ID=<your_aws_key>
+export AWS_SECRET_ACCESS_KEY=<your_aws_secret_key>
 cd aws/packer
 packer build packer.json
 cd ..
@@ -87,6 +92,8 @@ Additionally, you need to set the VAULT_TOKEN environment variable to a Vault to
 
 You also need to generate a Vault token for Nomad by running
 `vault token create -policy nomad-server -period 72h -orphan | sed -e '1,2d' | sed -e '2,6d' | sed 's/ //g' | sed 's/token//'`. Edit the terraform.tfvars file and replace "TOKEN_FOR_NOMAD" with this token.
+
+If your Vault token does not allow you to create periodic or orphaned tokens, run `vault token create -policy nomad-server -ttl=720h | sed -e '1,2d' | sed -e '2,6d' | sed 's/ //g' | sed 's/token//'` instead. This will give you a Vault token for Nomad valid for 30 days.
 
 Now, you're ready to use Terraform to provision your EC2 instances.  The default configuration creates 1 Server instance running Nomad and Consul servers and 2 Client instances running Nomad and Consul clients. Your Sock Shop apps will be deployed by Nomad to the Client instances. If running t2.medium instances, you need a minimum of 2 clients to run all the Sock Shop microservices.
 
