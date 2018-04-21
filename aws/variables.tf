@@ -28,6 +28,10 @@ variable "client_instance_type" {
 
 variable "key_name" {}
 
+variable "private_key_data" {
+  description = "contents of the private key"
+}
+
 variable "server_count" {
   description = "The number of servers to provision."
   default     = "1"

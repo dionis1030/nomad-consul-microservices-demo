@@ -76,7 +76,7 @@ vault write auth/token/roles/nomad-cluster @nomad-cluster-role.json
 ## Provisioning AWS EC2 instances with Packer and Terraform
 You can now use Packer and Terraform to provision your AWS EC2 instances. Terraform has already been configured to retrieve AWS credentials from your Vault server which has been configured to dynamically generate short-lived AWS keys for Terraform.
 
-I've already used Packer to create Amazon Machine Image ami-028f61b2f5c6c974c which uses Nomad 0.8.1 and Consul 1.0.7. You can use this as the basis for your EC2 instances. This AMI only exists in the AWS us-east-1 region. If you want to create a similar AMI in a different region or if you make any changes to any of the files in the shared directory, you will need to create your own AMI with Packer. This is very simple. Starting from the home directory, do the following (being sure to specify the region in packer.json if different from us-east-1):
+I've already used Packer to create Amazon Machine Image ami-0944b439cb28a5ad6 which uses Nomad 0.8.1 and Consul 1.0.7. You can use this as the basis for your EC2 instances. This AMI only exists in the AWS us-east-1 region. If you want to create a similar AMI in a different region or if you make any changes to any of the files in the shared directory, you will need to create your own AMI with Packer. This is very simple. Starting from the home directory, do the following (being sure to specify the region in packer.json if different from us-east-1):
 ```
 export AWS_ACCESS_KEY_ID=<your_aws_key>
 export AWS_SECRET_ACCESS_KEY=<your_aws_secret_key>

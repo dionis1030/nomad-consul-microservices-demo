@@ -19,50 +19,50 @@ SERVER_IP=$3
 VAULT_URL=$4
 
 # Install Java and queue-master.jar
-sudo apt install -y default-jre
+apt install -y default-jre
 
 # Consul
 sed -i "s/IP_ADDRESS/$IP_ADDRESS/g" $CONFIGDIR/consul_client.json
 sed -i "s/CLUSTER_TAG_VALUE/$CLUSTER_TAG_VALUE/g" $CONFIGDIR/consul_upstart.conf
 sed -i "s/REGION/$REGION/g" $CONFIGDIR/consul_upstart.conf
-sudo cp $CONFIGDIR/consul_client.json $CONSULCONFIGDIR/consul.json
-sudo cp $CONFIGDIR/consul_upstart.conf /etc/init/consul.conf
+cp $CONFIGDIR/consul_client.json $CONSULCONFIGDIR/consul.json
+cp $CONFIGDIR/consul_upstart.conf /etc/init/consul.conf
 
-sudo service consul start
+service consul start
 sleep 10
 export CONSUL_HTTP_ADDR=$IP_ADDRESS:8500
 
 # Nomad
 sed -i "s/IP_ADDRESS/$IP_ADDRESS/g" $CONFIGDIR/nomad_client.hcl
 sed -i "s@VAULT_URL@$VAULT_URL@g" $CONFIGDIR/nomad_client.hcl
-sudo cp $CONFIGDIR/nomad_client.hcl $NOMADCONFIGDIR/nomad.hcl
-sudo cp $CONFIGDIR/nomad_upstart.conf /etc/init/nomad.conf
+cp $CONFIGDIR/nomad_client.hcl $NOMADCONFIGDIR/nomad.hcl
+cp $CONFIGDIR/nomad_upstart.conf /etc/init/nomad.conf
 
-sudo service nomad start
+service nomad start
 sleep 10
 export NOMAD_ADDR=http://$IP_ADDRESS:4646
 
 # Add hostname to /etc/hosts
-echo "127.0.0.1 $(hostname)" | sudo tee --append /etc/hosts
+echo "127.0.0.1 $(hostname)" | tee --append /etc/hosts
 
 # Add Docker bridge network IP to /etc/resolv.conf (at the top)
-#echo "nameserver $DOCKER_BRIDGE_IP_ADDRESS" | sudo tee /etc/resolv.conf.new
-echo "nameserver $IP_ADDRESS" | sudo tee /etc/resolv.conf.new
-cat /etc/resolv.conf | sudo tee --append /etc/resolv.conf.new
-sudo mv /etc/resolv.conf.new /etc/resolv.conf
+#echo "nameserver $DOCKER_BRIDGE_IP_ADDRESS" | tee /etc/resolv.conf.new
+echo "nameserver $IP_ADDRESS" | tee /etc/resolv.conf.new
+cat /etc/resolv.conf | tee --append /etc/resolv.conf.new
+mv /etc/resolv.conf.new /etc/resolv.conf
 
 # Add search service.consul at bottom of /etc/resolv.conf
-echo "search service.consul" | sudo tee --append /etc/resolv.conf
+echo "search service.consul" | tee --append /etc/resolv.conf
 
 # Set env vars for tool CLIs
-echo "export CONSUL_HTTP_ADDR=$IP_ADDRESS:8500" | sudo tee --append /home/$HOME_DIR/.bashrc
-echo "export VAULT_ADDR=$VAULT_URL" | sudo tee --append /home/$HOME_DIR/.bashrc
-echo "export NOMAD_ADDR=http://$IP_ADDRESS:4646" | sudo tee --append /home/$HOME_DIR/.bashrc
+echo "export CONSUL_HTTP_ADDR=$IP_ADDRESS:8500" | tee --append /home/$HOME_DIR/.bashrc
+echo "export VAULT_ADDR=$VAULT_URL" | tee --append /home/$HOME_DIR/.bashrc
+echo "export NOMAD_ADDR=http://$IP_ADDRESS:4646" | tee --append /home/$HOME_DIR/.bashrc
 
 # Move daemon.json to /etc/docker
-sudo echo "{\"hosts\":[\"tcp://0.0.0.0:2375\",\"unix:///var/run/docker.sock\"],\"cluster-store\":\"consul://$IP_ADDRESS:8500\",\"cluster-advertise\":\"$IP_ADDRESS:2375\",\"dns\":[\"$IP_ADDRESS\"],\"dns-search\":[\"service.consul\"]}" > /home/ubuntu/daemon.json
-sudo mkdir -p /etc/docker
-sudo mv /home/ubuntu/daemon.json /etc/docker/daemon.json
+echo "{\"hosts\":[\"tcp://0.0.0.0:2375\",\"unix:///var/run/docker.sock\"],\"cluster-store\":\"consul://$IP_ADDRESS:8500\",\"cluster-advertise\":\"$IP_ADDRESS:2375\",\"dns\":[\"$IP_ADDRESS\"],\"dns-search\":[\"service.consul\"]}" > /home/ubuntu/daemon.json
+mkdir -p /etc/docker
+mv /home/ubuntu/daemon.json /etc/docker/daemon.json
 
 # Start Docker
-sudo service docker restart
+service docker restart

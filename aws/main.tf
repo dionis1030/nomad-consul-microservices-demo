@@ -42,3 +42,19 @@ module "nomadconsul" {
   token_for_nomad   = "${var.token_for_nomad}"
   vault_url         = "${var.vault_url}"
 }
+
+resource "null_resource" "start_sock_shop" {
+  provisioner "remote-exec" {
+    inline = [
+      "nomad run /home/ubuntu/sockshop.nomad"
+    ]
+
+    connection {
+      host = "${module.nomadconsul.primary_server_public_ips[0]}"
+      type = "ssh"
+      agent = false
+      user = "ubuntu"
+      private_key = "${var.private_key_data}"
+    }
+  }
+}
