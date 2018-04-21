@@ -12,9 +12,9 @@ You'll want to clone this repository to your local machine with the command `git
 ## Prerequisites
 In order to deploy the Sock Shop demo to AWS, you will need an AWS account. You will also need to know your AWS access and secret access [keys](http://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html#access-keys-and-secret-access-keys). You'll also need a [key pair](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2-key-pairs.html) from your AWS account. Of course, you'll also want to clone or download this repository to your laptop. In a terminal session, you would use `git clone https://github.com/rberlind/hashicorp-demo.git`.
 
-You will need to download and install Packer and Terraform locally from [Packer Downloads](https://www.packer.io/downloads.html) and [Terraform Downloads](https://www.terraform.io/downloads.html) respectively. This demo was built and tested with Packer 1.2.1 and Terraform 0.11.5.
+You will need to download and install Packer and Terraform locally from [Packer Downloads](https://www.packer.io/downloads.html) and [Terraform Downloads](https://www.terraform.io/downloads.html) respectively. This demo was built and tested with Packer 1.2.1 and Terraform 0.11.7.
 
-You will also need a Vault server that is accessible from your AWS account.  Ideally, you would run it in your AWS account. You can download Vault from [Vault Downloads](https://www.vaultproject.io/downloads.html). This demo was built and tested with Vault 0.9.6.
+You will also need a Vault server that is accessible from your AWS account.  Ideally, you would run it in your AWS account. You can download Vault from [Vault Downloads](https://www.vaultproject.io/downloads.html). This demo was built and tested with Vault 0.10.0.
 
 ## Configure your Vault Server for the Demo
 We assume you have installed, initialized, and unsealed your Vault server and can run `vault` commands against it. We have provided a script to automate the rest of the configuration of the Vault server needed for this demo, but you still need to manually initialize and unseal Vault if you have just deployed a new Vault server to use with this demo.  If that is the case, please do the following two steps on your Vault server:
