@@ -46,7 +46,7 @@ module "nomadconsul" {
 resource "null_resource" "start_sock_shop" {
   provisioner "remote-exec" {
     inline = [
-      "sleep 120",
+      "sleep 180",
       "nomad run /home/ubuntu/sockshop.nomad"
     ]
 
