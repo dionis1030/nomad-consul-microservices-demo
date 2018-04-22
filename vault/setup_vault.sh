@@ -16,21 +16,12 @@ vault write aws-tf/config/lease lease=1h lease_max=24h
 echo "Creating the AWS deploy role and assigning policy to it"
 vault write aws-tf/roles/deploy policy=@aws-policy.json
 
-# Setup the Vault SSH secret backend
-# We are using this just to generate a root password
-# for the MySQL database used by the catalogue-db database
-echo "Setting up the Vault SSH secret backend"
-vault secrets enable -path=ssh-nomad ssh
-echo "Setting up the otp_nomad role for SSH"
-vault write ssh-nomad/roles/otp_nomad key_type=otp default_user=root cidr_list=172.17.0.0/24
-echo "Writing the ssh_policy.hcl to Vault"
-vault policy write ssh_policy ssh_policy.hcl
-
 # Create sockshop-read policy
 vault policy write sockshop-read sockshop-read.hcl
 
-# Write the userdb password to Vault
-vault write secret/sockshop/database/passwords userdb=dioe93kdo93
+# Write the cataloguedb and userdb passwords to Vault
+vault write secret/sockshop/databases/catalougedb pwd=dioe93kdo931
+vault write secret/sockshop/databases/userdb pwd=wo39c5h2sl4r
 
 # Setup Vault policy/role for Nomad
 echo "Setting up Vault policy and role for Nomad"

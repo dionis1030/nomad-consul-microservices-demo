@@ -46,27 +46,17 @@ vault write aws-tf/roles/deploy policy=@aws-policy.json
 
 If you want, test that you can dynamically generate AWS credentials by running `vault read aws-tf/creds/deploy`.  This will return an access key and secret key usable for 1 hour.
 
-### Configure SSH Secrets Engine on your Vault server
-We're actually using the Vault SSH Secret Backend to generate the root user's password for the catalogue-db database and passing that into the catalogue-db Docker container via an environment variable. Here are the steps that the script does to set this up:
-
-```
-vault secrets enable -path=ssh-nomad ssh
-vault write ssh-nomad/roles/otp_nomad key_type=otp default_user=root cidr_list=172.17.0.0/24
-vault policy write ssh_policy ssh_policy.hcl
-```
-
-If you want, test that you can dynamically generate a password by running `vault write ssh-nomad/creds/otp_nomad ip=172.17.0.1`.
-
-### Create sockshop-read policy and write the userdb password
-Nomad will fetch the userdb password from Vault. We first create a Vault policy to allow that and then write the password to the userdb key of the secret/sockshop/database/passwords path. You can set any password you want.
+### Create sockshop-read policy and write passwords
+Nomad will fetch the cataloguedb and userdb passwords from Vault. We first create a Vault policy to allow that and then write the passwords to the pwd key of the secret/sockshop/databases/catalougedb and secret/sockshop/databases/userdb paths. You can set any password you want.
 
 ```
 vault policy write sockshop-read sockshop-read.hcl
-vault write secret/sockshop/database/passwords userdb=dioe93kdo93
+vault write secret/sockshop/databases/catalougedb pwd=dioe93kdo931
+vault write secret/sockshop/databases/userdb pwd=wo39c5h2sl4r
 ```
 
 ### Configure Vault to Generate Tokens for Nomad
-In order for Nomad to fetch an SSH secret from Vault and use it as a password for the catalogue-db database, we need to set up some Vault policies. We import these into our Vault server with these commands:
+In order for Nomad to fetch the cataloguedb and userdb passwords from Vault, we need to set up some Vault policies. We import these into our Vault server with these commands:
 
 ```
 vault policy write nomad-server nomad-server-policy.hcl
@@ -76,7 +66,7 @@ vault write auth/token/roles/nomad-cluster @nomad-cluster-role.json
 ## Provisioning AWS EC2 instances with Packer and Terraform
 You can now use Packer and Terraform to provision your AWS EC2 instances. Terraform has already been configured to retrieve AWS credentials from your Vault server which has been configured to dynamically generate short-lived AWS keys for Terraform.
 
-I've already used Packer to create Amazon Machine Image ami-0944b439cb28a5ad6 which uses Nomad 0.8.1 and Consul 1.0.7. You can use this as the basis for your EC2 instances. This AMI only exists in the AWS us-east-1 region. If you want to create a similar AMI in a different region or if you make any changes to any of the files in the shared directory, you will need to create your own AMI with Packer. This is very simple. Starting from the home directory, do the following (being sure to specify the region in packer.json if different from us-east-1):
+I've already used Packer to create Amazon Machine Image ami-035f35b52c5346dda which uses Nomad 0.8.1 and Consul 1.0.7. You can use this as the basis for your EC2 instances. This AMI only exists in the AWS us-east-1 region. If you want to create a similar AMI in a different region or if you make any changes to any of the files in the shared directory, you will need to create your own AMI with Packer. This is very simple. Starting from the home directory, do the following (being sure to specify the region in packer.json if different from us-east-1):
 ```
 export AWS_ACCESS_KEY_ID=<your_aws_key>
 export AWS_SECRET_ACCESS_KEY=<your_aws_secret_key>
@@ -88,7 +78,7 @@ Be sure to note the AMI ID of your new AMI and to enter this as the value of the
 
 Before using Terraform, you need to use one of your AWS EC2 key pairs or [create](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2-key-pairs.html#having-EC2-create-your-key-pair) a new one. Please download your private key and copy it to the aws directory to make connecting to your EC2 instances easier.  Be sure to specify the name of your key in the value for the "key_name" variable in terraform.tfvars under the aws directory. You should also set the variable owner_tag_value to your name or e-mail. Also set the vpc_id and subnet_id to an existing VPC and public subnet in it. Also be sure to set the vault_url variable to the address of your Vault server including the port. I use http://kubernetes-vault-elb-1667455164.us-east-1.elb.amazonaws.com:8200.
 
-Additionally, you need to set the VAULT_TOKEN environment variable to a Vault token on your server that is allowed to use the AWS secrets and SSH engines. The actual commands to set this on Mac OS X or Linux is `export VAULT_TOKEN=<token>`.
+Additionally, you need to set the VAULT_TOKEN environment variable to a Vault token on your server that is allowed to use the AWS secrets engine. The actual commands to set this on Mac OS X or Linux is `export VAULT_TOKEN=<token>`.
 
 You also need to generate a Vault token for Nomad by running
 `vault token create -policy nomad-server -period 72h -orphan | sed -e '1,2d' | sed -e '2,6d' | sed 's/ //g' | sed 's/token//'`. Edit the terraform.tfvars file and replace "TOKEN_FOR_NOMAD" with this token.

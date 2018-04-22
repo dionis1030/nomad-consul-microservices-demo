@@ -94,7 +94,7 @@ job "sockshop" {
 
       template {
         data = <<EOH
-        MONGO_PASS="{{with secret "secret/sockshop/database/passwords" }}{{.Data.userdb}}{{end}}"
+        MONGO_PASS="{{with secret "secret/sockshop/databases/userdb" }}{{.Data.pwd}}{{end}}"
         EOH
         destination = "secrets/user_db.env"
         env = true
@@ -135,7 +135,7 @@ job "sockshop" {
 
       template {
         data = <<EOH
-        MONGO_PASS="{{with secret "secret/sockshop/database/passwords" }}{{.Data.userdb}}{{end}}"
+        MONGO_PASS="{{with secret "secret/sockshop/databases/userdb" }}{{.Data.pwd}}{{end}}"
         EOH
         destination = "secrets/user_db.env"
         env = true
@@ -212,12 +212,12 @@ job "sockshop" {
       }
 
       vault {
-	      policies = ["default", "ssh_policy"]
+	      policies = ["sockshop-read"]
       }
 
       template {
         data = <<EOH
-	      MYSQL_ROOT_PASSWORD="{{with secret "ssh-nomad/creds/otp_nomad" "ip=172.17.0.1"}}{{.Data.key}}{{end}}"
+	      MYSQL_ROOT_PASSWORD="{{with secret "secret/sockshop/databases/cataloguedb" }}{{.Data.pwd}}{{end}}"
         EOH
 	      destination = "secrets/mysql_root_pwd.env"
         env = true
