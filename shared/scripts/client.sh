@@ -18,7 +18,8 @@ CLUSTER_TAG_VALUE=$2
 SERVER_IP=$3
 VAULT_URL=$4
 
-# Install Java and queue-master.jar
+# Install Java
+apt-get update
 apt install -y default-jre
 
 # Consul

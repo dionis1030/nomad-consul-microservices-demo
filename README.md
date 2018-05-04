@@ -86,7 +86,7 @@ You also need to generate a Vault token for Nomad by running
 ## Step 2: Create a New AMI with Packer (if needed)
 You can now use Packer and Terraform to provision your AWS EC2 instances along with other AWS infrastructure. Terraform has already been configured to retrieve dynamically generated short-lived AWS keys from your Vault server.
 
-We have already used Packer to create Amazon Machine Image ami-035f35b52c5346dda which uses Nomad 0.8.1 and Consul 1.0.7. You can use this as the basis for your EC2 instances. This AMI only exists in the AWS us-east-1 region. If you want to create a similar AMI in a different region or if you make any changes to any of the files in the shared directory, you will need to create your own AMI with Packer. This is very simple. Starting from the home directory, do the following (being sure to specify the region in packer.json if different from us-east-1):
+We have already used Packer to create Amazon Machine Image ami-0773061edb0eb6550 which uses Nomad 0.8.1 and Consul 1.0.7. You can use this as the basis for your EC2 instances. This AMI only exists in the AWS us-east-1 region. If you want to create a similar AMI in a different region or if you make any changes to any of the files in the shared directory, you will need to create your own AMI with Packer. This is very simple. Starting from the home directory, do the following (being sure to specify the region in packer.json if different from us-east-1):
 
 ```
 export AWS_ACCESS_KEY_ID=<your_aws_key>
