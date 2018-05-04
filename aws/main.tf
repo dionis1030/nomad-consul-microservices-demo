@@ -28,8 +28,8 @@ module "nomadconsul" {
 
   region            = "${var.region}"
   ami               = "${var.ami}"
-  vpc_cidr            = "${var.vpc_cidr}"
-  subnet_cidr         = "${var.subnet_cidr}"
+  vpc_id            = "${aws_vpc.sockshop.id}"
+  subnet_id         = "${aws_subnet.public-subnet.id}"
   server_instance_type     = "${var.server_instance_type}"
   client_instance_type     = "${var.client_instance_type}"
   key_name          = "${var.key_name}"
