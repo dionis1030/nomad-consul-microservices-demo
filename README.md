@@ -83,10 +83,10 @@ vault write auth/token/roles/nomad-cluster @nomad-cluster-role.json
 You also need to generate a Vault token for Nomad by running
 `vault token create -policy nomad-server -ttl=720h | sed -e '1,2d' | sed -e '2,6d' | sed 's/ //g' | sed 's/token//'`. This will give you a Vault token for Nomad valid for 30 days. You will need to enter this in your Terraform variables in Step 5.
 
-## Step 2: Create a New AMI with Packer (if needed)
+## Step 2: Create a New AMI with Packer (optional)
 You can now use Packer and Terraform to provision your AWS EC2 instances along with other AWS infrastructure. Terraform has already been configured to retrieve dynamically generated short-lived AWS keys from your Vault server.
 
-We have already used Packer to create Amazon Machine Image ami-0773061edb0eb6550 which uses Nomad 0.8.1 and Consul 1.0.7. You can use this as the basis for your EC2 instances. This AMI only exists in the AWS us-east-1 region. If you want to create a similar AMI in a different region or if you make any changes to any of the files in the shared directory, you will need to create your own AMI with Packer. This is very simple. Starting from the home directory, do the following (being sure to specify the region in packer.json if different from us-east-1):
+We have already used Packer to create Amazon Machine Image ami-0773061edb0eb6550 which uses Nomad 0.8.1 and Consul 1.0.7. You can use this as the basis for your EC2 instances. This AMI only exists in the AWS us-east-1 region. If you want to create a similar AMI in a different region or if you make any changes to any of the files in the shared directory, you will need to create your own AMI with Packer. This is very simple. Starting from the home directory, do the following (being sure to specify the region and a vaid source_ami for that region in packer.json if the region is different from us-east-1):
 
 ```
 export AWS_ACCESS_KEY_ID=<your_aws_key>
@@ -96,10 +96,10 @@ packer build packer.json
 cd ..
 ```
 
-Be sure to note the AMI ID of your new AMI. You will need to enter this in your Terraform variables in Step 5.
+Be sure to note the AMI ID of your new AMI. You will need to enter this in your Terraform variables in Step 5. If you generated this in a region other than us-east-1, then be sure to set the region variable in Step 5.
 
 ## Step 3: Create an AWS EC2 Key Pair (if needed)
-You need to use one of your AWS EC2 key pairs or [create](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2-key-pairs.html#having-EC2-create-your-key-pair) a new one. Please download your private key and copy it to the aws directory to make connecting to your EC2 instances easier.
+You need to use one of your AWS EC2 key pairs or [create](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2-key-pairs.html#having-EC2-create-your-key-pair) a new one. Please download your private key and copy it to the aws directory to make connecting to your EC2 instances easier in Step 7.
 
 ## Step 4: Set Up and Configure Terraform Enterprise
 1. If you do not already have a Terraform Enterprise (TFE) account, self-register for an evaluation at https://app.terraform.io/account/new.
@@ -114,7 +114,7 @@ If you want to use open source Terraform instead of TFE, you can clone this repo
 1. Configure the workspace to connect to the fork of this repository in your own Github account.
 1. Set the Terraform Working Directory to "application-deployment/microservices".
 1. On the Variables tab of your workspace, add Terraform variables as described below.
-1. If you used Packer to build a new AMI, set the ami variable to the AMI ID of the new AMI; otherwise, you can use the default value.
+1. If you used Packer to build a new AMI, set the ami variable to the AMI ID of the new AMI; otherwise, you can use the default value. If you built your AMI in a region different from us-east-1, then set the region variable to that region and set the subnet_az variable to an availability zone in that region.
 1. Set the key_name variable to the name of your private key and set the private_key_data variable to the contents of the private key. Be sure to mark the private_key_data variable as sensitive.
 1. Set the variables name_tag_prefix and cluster_tag_value to something like "\<your_name\>-microservices".
 1. HashiCorp SEs should also set the owner and ttl variables which are used by the AWS Lambda reaper function that terminates old EC2 instances.
@@ -122,9 +122,9 @@ If you want to use open source Terraform instead of TFE, you can clone this repo
 1. Set the VAULT_TOKEN environment variable to a Vault token on your server that is allowed to use the AWS secrets engine and that has read access to the path "secret/sockshop". Be sure to mark the VAULT_TOKEN variable as sensitive so that other people cannot read it.
 1. Set the token_for_nomad variable to the Vault token you generated for Nomad in Step 1f.
 
-Now, you're ready to use Terraform to provision your EC2 instances.  The default configuration creates 1 Server instance running Nomad and Consul servers and 2 Client instances running Nomad and Consul clients. Your Sock Shop apps will be deployed by Nomad to the Client instances. If running t2.medium instances, you need a minimum of 2 clients to run all the Sock Shop microservices.
+Now, you're ready to use Terraform to provision your EC2 instances.  The default configuration creates 1 Server instance running Nomad and Consul servers and 2 Client instances running Nomad and Consul clients. Your Sock Shop apps will be deployed by Nomad to the Client instances. If running t2.medium instances, you need a minimum of 2 clients to run all the Sock Shop microservices. You can set the instance types with server_instance_type and client_instance_type.
 
-You can set server_count and client_count to larger numbers if desired.  We recommend 3 of each if you want to demonstrate that Nomad reschedules tasks if a client is killed and that a new leader is elected in the cluster if one of the servers is killed.
+You can set server_count and client_count to larger numbers if desired.  We recommend 3 of each if you want to demonstrate that Nomad reschedules tasks if a client is terminated and that a new leader is elected in the cluster if one of the servers is terminated.
 
 If desired, you can set the vpc_cidr and subnet_cidr to valid CIDR ranges. The defaults are "10.0.0.0/16" and "10.0.1.0/24" respectively.
 
@@ -133,12 +133,12 @@ If desired, you can set the vpc_cidr and subnet_cidr to valid CIDR ranges. The d
 1. On the Latest Run tab, you should see a new run. If the plan succeeds, you can view the plan and verify that the AWS infrastructure including the Nomad/Consul servers and clients will be created when you apply your plan.
 1. Click the "Confirm and Apply" button to actually provision everything.
 
-When the apply finishes, you should see a message giving the public and private IP addresses for all your server and client instances along with URLs to access the Nomad and Consul UIs.  In your AWS console, you should be able to see all your instances under EC2 Instances. If you were already on that screen, you'll need to refresh it.
+When the apply finishes, you should see a message giving the public and private IP addresses for all your server and client instances along with a command to ssh to one of your servers and URLs to access the Nomad and Consul UIs.  In your AWS console, you should be able to see all your instances under EC2 Instances. If you were already on that screen, you'll need to refresh it.
 
 Note that Nomad and Consul will automatically be started and that Nomad will run the sockshop job.
 
 ## Step 7: Verification that Consul and Nomad are Running
-From a directory containing your private EC2 key pair, you can connect to one of your Nomad servers with `ssh -i <key> ubuntu@<server_public_ip>`, replacing \<key\> with your actual private key file (ending in ".pem") and \<server_public_ip\> with the public IP of your server instance.
+From a directory containing your private EC2 key pair, you can connect to one of your Nomad servers with `ssh -i <key> ubuntu@<server_public_ip>`, replacing \<key\> with your actual private key file (ending in ".pem") and \<server_public_ip\> with the public IP of your server instance. The exact command should have been in the outputs of the apply.
 
 After connecting, if you run the `pwd` command, you will see that you are in the /home/ubuntu directory. If you run the `ls` command, you should see the file sockshop.nomad.
 
@@ -156,7 +156,7 @@ Note that the queue-master task is launched with the Java driver and that the qu
 You can check the status of the sockshop job on any of the servers or clients by running `nomad status sockshop`.  All tasks should be running.
 
 ## Step 9: Using the Sock Shop application
-You should now be able to access the Sock Shop UI with a browser on your laptop.  Just point your browser against http://<client_ip>, replacing \<client_ip\> with any of the client instance public IP addresses.
+You should now be able to access the Sock Shop UI with a browser on your laptop.  Just point your browser against http://<client_ip>, replacing \<client_ip\> with any of the client public IP addresses.
 
 You can login to the Sock Shop as "Eve_Berger" with password "eve".  You can then browse through the catalogue, add some socks to your shopping cart, checkout, and view your order.
 
