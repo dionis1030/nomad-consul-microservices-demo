@@ -7,8 +7,8 @@ variable "server_count" {}
 variable "client_count" {}
 variable "name_tag_prefix" {}
 variable "cluster_tag_value" {}
-variable "owner_tag_value" {}
-variable "ttl_tag_value" {}
+variable "owner" {}
+variable "ttl" {}
 variable "token_for_nomad" {}
 variable "vault_url" {}
 variable "vpc_id" {}
@@ -186,8 +186,8 @@ resource "aws_instance" "primary" {
   tags {
     Name = "${var.name_tag_prefix}-server-${count.index}"
     ConsulAutoJoin = "${var.cluster_tag_value}"
-    owner = "${var.owner_tag_value}"
-    TTL = "${var.ttl_tag_value}"
+    owner = "${var.owner}"
+    TTL = "${var.ttl}"
     created-by = "Terraform"
   }
 
@@ -208,8 +208,8 @@ resource "aws_instance" "client" {
   tags {
     Name = "${var.name_tag_prefix}-client-${count.index}"
     ConsulAutoJoin = "${var.cluster_tag_value}"
-    owner = "${var.owner_tag_value}"
-    TTL = "${var.ttl_tag_value}"
+    owner = "${var.owner}"
+    TTL = "${var.ttl}"
     created-by = "Terraform"
   }
 

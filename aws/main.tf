@@ -28,8 +28,8 @@ module "nomadconsul" {
 
   region            = "${var.region}"
   ami               = "${var.ami}"
-  vpc_id            = "${var.vpc_id}"
-  subnet_id         = "${var.subnet_id}"
+  vpc_cidr            = "${var.vpc_cidr}"
+  subnet_cidr         = "${var.subnet_cidr}"
   server_instance_type     = "${var.server_instance_type}"
   client_instance_type     = "${var.client_instance_type}"
   key_name          = "${var.key_name}"
@@ -37,8 +37,8 @@ module "nomadconsul" {
   client_count      = "${var.client_count}"
   name_tag_prefix   = "${var.name_tag_prefix}"
   cluster_tag_value = "${var.cluster_tag_value}"
-  owner_tag_value   = "${var.owner_tag_value}"
-  ttl_tag_value     = "${var.ttl_tag_value}"
+  owner   = "${var.owner}"
+  ttl     = "${var.ttl}"
   token_for_nomad   = "${var.token_for_nomad}"
   vault_url         = "${var.vault_url}"
 }
