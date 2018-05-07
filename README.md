@@ -88,6 +88,8 @@ You can now use Packer and Terraform to provision your AWS EC2 instances along w
 
 We have already used Packer to create Amazon Machine Image ami-0773061edb0eb6550 which uses Nomad 0.8.1 and Consul 1.0.7. You can use this as the basis for your EC2 instances. This AMI only exists in the AWS us-east-1 region. If you want to create a similar AMI in a different region or if you make any changes to any of the files in the shared directory, you will need to create your own AMI with Packer. This is very simple. Starting from the home directory, do the following (being sure to specify the region and a vaid source_ami for that region in packer.json if the region is different from us-east-1):
 
+In my own AWS account, I created AMI ami-bc8506c3 just in case the one above is not available for SE training.
+
 ```
 export AWS_ACCESS_KEY_ID=<your_aws_key>
 export AWS_SECRET_ACCESS_KEY=<your_aws_secret_key>
