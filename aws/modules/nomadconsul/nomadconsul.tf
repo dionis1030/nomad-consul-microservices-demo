@@ -277,6 +277,15 @@ resource "aws_security_group_rule" "http_egress" {
     cidr_blocks = ["0.0.0.0/0"]
 }
 
+resource "aws_security_group_rule" "vault_egress" {
+    security_group_id = "${aws_security_group.primary.id}"
+    type = "egress"
+    from_port = 8200
+    to_port = 8200
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+}
+
 # Template File for Server
 data "template_file" "user_data_server_primary" {
   template = "${file("${path.root}/user-data-server.sh")}"
