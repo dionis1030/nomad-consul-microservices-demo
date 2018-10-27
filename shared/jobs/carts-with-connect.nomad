@@ -1,4 +1,4 @@
-job "sockshop" {
+job "carts-with-connect" {
   datacenters = ["dc1"]
 
   constraint {
@@ -32,8 +32,11 @@ group "carts" {
     }
 
     config {
-      image = "weaveworksdemos/carts:0.4.8"
+      image = "rberlind/carts:0.4.8"
       hostname = "carts.service.consul"
+      network_mode = "host"
+      dns_servers = ["172.17.0.1"]
+      dns_search_domains = ["service.consul"]
       port_map = {
         http = 80
       }
@@ -50,20 +53,22 @@ group "carts" {
       memory = 1024 # 1024MB
       network {
         mbits = 10
-        port "http" {}
+        port "http" {
+          static = 80
+        }
       }
     }
   } # - end app - #
 
   # - cart connect upstream proxy - #
   task "cartproxy" {
-    driver = "raw_exec"
+    driver = "exec"
 
     config {
       command = "/usr/local/bin/consul"
       args    = [
         "connect", "proxy",
-        #"-http-addr", "${NOMAD_IP_tcp}:8500",
+        "-http-addr", "${NOMAD_IP_tcp}:8500",
         "-log-level", "trace",
         "-service", "carts",
         "-upstream", "carts-db:${NOMAD_PORT_tcp}",
@@ -84,6 +89,9 @@ group "carts" {
     config {
       image = "mongo:3.4.3"
       hostname = "carts-db.service.consul"
+      network_mode = "host"
+      dns_servers = ["172.17.0.1"]
+      dns_search_domains = ["service.consul"]
       port_map = {
         http = 27017
       }
@@ -100,20 +108,22 @@ group "carts" {
       memory = 128 # 128MB
       network {
         mbits = 10
-              port "http" {}
+              port "http" {
+                static = 27017
+              }
       }
     }
   } # - end db - #
 
   # - cartdb proxy - #
   task "cartdbproxy" {
-    driver = "raw_exec"
+    driver = "exec"
 
     config {
       command = "/usr/local/bin/consul"
       args    = [
         "connect", "proxy",
-        #"-http-addr", "${NOMAD_IP_tcp}:8500",
+        "-http-addr", "${NOMAD_IP_tcp}:8500",
         "-log-level", "trace",
         "-service", "carts-db",
         "-service-addr", "${NOMAD_ADDR_cartdb_http}",

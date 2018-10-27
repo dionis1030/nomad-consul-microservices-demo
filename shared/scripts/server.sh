@@ -39,17 +39,6 @@ cp $CONFIGDIR/nomad.hcl $NOMADCONFIGDIR
 cp $CONFIGDIR/nomad_upstart.conf /etc/init/nomad.conf
 export NOMAD_ADDR=http://$IP_ADDRESS:4646
 
-# Add hostname to /etc/hosts
-echo "127.0.0.1 $(hostname)" | tee --append /etc/hosts
-
-# Add Private IP to /etc/resolv.conf (at the top)
-echo "nameserver $IP_ADDRESS" | tee /etc/resolv.conf.new
-cat /etc/resolv.conf | tee --append /etc/resolv.conf.new
-mv /etc/resolv.conf.new /etc/resolv.conf
-
-# Add search service.consul at bottom of /etc/resolv.conf
-echo "search service.consul" | tee --append /etc/resolv.conf
-
 # Set env vars for tool CLIs
 echo "export CONSUL_HTTP_ADDR=$IP_ADDRESS:8500" | tee --append /home/$HOME_DIR/.bashrc
 echo "export VAULT_ADDR=$VAULT_URL" | tee --append /home/$HOME_DIR/.bashrc
