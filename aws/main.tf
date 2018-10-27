@@ -43,7 +43,7 @@ module "nomadconsul" {
   vault_url         = "${var.vault_url}"
 }
 
-/*resource "null_resource" "start_sock_shop" {
+resource "null_resource" "start_sock_shop" {
   provisioner "remote-exec" {
     inline = [
       "sleep 180",
@@ -58,4 +58,4 @@ module "nomadconsul" {
       private_key = "${var.private_key_data}"
     }
   }
-}*/
+}
