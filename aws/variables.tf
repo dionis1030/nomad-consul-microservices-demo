@@ -8,6 +8,11 @@ variable "ami" {
   default = "ami-0773061edb0eb6550"
 }
 
+variable "use_connect" {
+  description = "whether to use Consul connect for carts"
+  default = false
+}
+
 variable "vpc_cidr" {
   description = "VPC CIDR"
   default = "10.0.0.0/16"

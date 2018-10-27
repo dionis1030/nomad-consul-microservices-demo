@@ -43,12 +43,17 @@ module "nomadconsul" {
   vault_url         = "${var.vault_url}"
 }
 
+locals {
+  sockshop = "${var.use_connect ? sockshop_connect.nomad : sockshop.nomad}"
+  sockshopui = "${var.use_connect ? sockshopui_connect.nomad : sockshopui.nomad}"
+}
+
 resource "null_resource" "start_sock_shop" {
   provisioner "remote-exec" {
     inline = [
       "sleep 180",
-      "nomad job run -address=http://${module.nomadconsul.primary_server_private_ips[0]}:4646 /home/ubuntu/sockshop.nomad",
-      "nomad job run -address=http://${module.nomadconsul.primary_server_private_ips[0]}:4646 /home/ubuntu/sockshopui.nomad"
+      "nomad job run -address=http://${module.nomadconsul.primary_server_private_ips[0]}:4646 /home/ubuntu/${local.sockshop}",
+      "nomad job run -address=http://${module.nomadconsul.primary_server_private_ips[0]}:4646 /home/ubuntu/${local.sockshopui}"
     ]
 
     connection {
