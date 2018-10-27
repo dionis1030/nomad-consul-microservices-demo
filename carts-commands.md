@@ -24,18 +24,18 @@ Created item3.json:
 
 Used these curl commands to inject items into cart for customer 1:
 ```
-curl --data @item1.json -H "Content-Type: application/json"  http://carts/carts/1/items
+curl -H "Content-Type: application/json" --data @item1.json  http://localhost/carts/1/items
 
-curl --data @item2.json -H "Content-Type: application/json"  http://carts/carts/1/items
+curl -H "Content-Type: application/json" --data @item2.json http://localhost/carts/1/items
 
-curl --data @item3.json -H "Content-Type: application/json"  http://carts/carts/1/items
+curl -H "Content-Type: application/json" --data @item3.json http://localhost/carts/1/items
 ```
 
 Use this command to see contents of cart:
-`curl  -H "Content-Type: application/json"  http://carts/carts/1/items | jq`
+`curl -H "Content-Type: application/json" http://localhost/carts/1/items | jq`
 
 Use this command to remove item 3 from cart:
-`curl -X DELETE -H "Content-Type: application/json"  http://carts/carts/1/items/3`
+`curl -H "Content-Type: application/json" -X DELETE http://localhost/carts/1/items/3`
 
 Use this command to delete entire cart:
-`curl -X DELETE -H "Content-Type: application/json"  http://carts/carts/1`
+`curl -H "Content-Type: application/json" -X DELETE http://localhost/carts/1`

@@ -48,7 +48,7 @@ echo "export NOMAD_ADDR=http://$IP_ADDRESS:4646" | tee --append /home/$HOME_DIR/
 service docker restart
 
 # Copy Nomad jobs and scripts to desired locations
-cp /ops/shared/jobs/* /home/ubuntu/.
+cp /ops/shared/jobs/*.nomad /home/ubuntu/.
 chown -R $HOME_DIR:$HOME_DIR /home/$HOME_DIR/
 chmod  666 /home/ubuntu/*
 
