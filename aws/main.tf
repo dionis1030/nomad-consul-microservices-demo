@@ -46,7 +46,7 @@ module "nomadconsul" {
 resource "null_resource" "start_sock_shop" {
   provisioner "remote-exec" {
     inline = [
-      "sleep 180",
+      "sleep 60",
       "nomad job run -address=http://${module.nomadconsul.primary_server_private_ips[0]}:4646 /home/ubuntu/carts-with-connect.nomad",
     ]
 
