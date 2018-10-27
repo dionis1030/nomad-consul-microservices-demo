@@ -39,6 +39,13 @@ cp $CONFIGDIR/nomad.hcl $NOMADCONFIGDIR
 cp $CONFIGDIR/nomad_upstart.conf /etc/init/nomad.conf
 export NOMAD_ADDR=http://$IP_ADDRESS:4646
 
+echo "nameserver $IP_ADDRESS" | tee /etc/resolv.conf.new
+cat /etc/resolv.conf | tee --append /etc/resolv.conf.new
+mv /etc/resolv.conf.new /etc/resolv.conf
+
+# Add search service.consul at bottom of /etc/resolv.conf
+echo "search service.consul" | tee --append /etc/resolv.conf
+
 # Set env vars for tool CLIs
 echo "export CONSUL_HTTP_ADDR=$IP_ADDRESS:8500" | tee --append /home/$HOME_DIR/.bashrc
 echo "export VAULT_ADDR=$VAULT_URL" | tee --append /home/$HOME_DIR/.bashrc
@@ -48,7 +55,7 @@ echo "export NOMAD_ADDR=http://$IP_ADDRESS:4646" | tee --append /home/$HOME_DIR/
 service docker restart
 
 # Copy Nomad jobs and scripts to desired locations
-cp /ops/shared/jobs/*.nomad /home/ubuntu/.
+cp /ops/shared/jobs/* /home/ubuntu/.
 chown -R $HOME_DIR:$HOME_DIR /home/$HOME_DIR/
 chmod  666 /home/ubuntu/*
 
