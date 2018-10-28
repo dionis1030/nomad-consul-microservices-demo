@@ -5,7 +5,7 @@ variable "region" {
 
 variable "ami" {
   description = "AMI ID"
-  default = "ami-0773061edb0eb6550"
+  default = "ami-0c274cd69af4800f2"
 }
 
 variable "vpc_cidr" {
@@ -46,7 +46,7 @@ variable "server_count" {
 
 variable "client_count" {
   description = "The number of clients to provision."
-  default     = "2"
+  default     = "1"
 }
 
 variable "name_tag_prefix" {
