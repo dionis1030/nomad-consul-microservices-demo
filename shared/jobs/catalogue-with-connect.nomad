@@ -26,16 +26,14 @@ job "catalouge-with-connect" {
     task "catalogue" {
       driver = "docker"
 
-      env {
-          dsn = "catalogue_user:default_password@tcp(127.0.0.1:${NOMAD_PORT_catalogueproxy_tcp})/socksdb"
-      }
-
       config {
-        image = "weaveworksdemos/catalogue:0.3.5"
+        image = "rberlind/catalogue:latest"
+        command = "/app"
+        args = ["-port", "8080", "-DSN", "catalogue_user:default_password@tcp(127.0.0.1:${NOMAD_PORT_catalogueproxy_tcp})/socksdb"]
         hostname = "catalogue.service.consul"
         network_mode = "host"
         port_map = {
-          http = 80
+          http = 8080
         }
       }
 
@@ -51,7 +49,7 @@ job "catalouge-with-connect" {
         network {
           mbits = 10
           port "http" {
-            static = 80
+            static = 8080
           }
         }
       }
@@ -84,7 +82,7 @@ job "catalouge-with-connect" {
       driver = "docker"
 
       config {
-        image = "weaveworksdemos/catalogue-db:0.3.5"
+        image = "rberlind/catalogue-db:latest"
         hostname = "catalogue-db.service.consul"
         network_mode = "host"
         port_map = {
