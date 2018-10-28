@@ -56,7 +56,3 @@ echo "export NOMAD_ADDR=http://$IP_ADDRESS:4646" | tee --append /home/$HOME_DIR/
 
 # Start Docker
 service docker restart
-
-# Copy carts items files to /home/ubuntu
-cp /ops/shared/jobs/*.json /home/ubuntu/.
-chown -R $HOME_DIR:$HOME_DIR /home/$HOME_DIR/
