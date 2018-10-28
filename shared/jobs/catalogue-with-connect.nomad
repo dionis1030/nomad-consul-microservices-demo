@@ -27,7 +27,7 @@ job "catalouge-with-connect" {
       driver = "docker"
 
       env {
-          dsn = "catalogue_user:default_password@tcp(catalogue-db:${NOMAD_PORT_catalogueproxy_tcp})/socksdb"
+          dsn = "catalogue_user:default_password@tcp(127.0.0.1:${NOMAD_PORT_catalogueproxy_tcp})/socksdb"
       }
 
       config {
