@@ -90,21 +90,9 @@ job "catalouge-with-connect" {
         }
       }
 
-      vault {
-	      policies = ["sockshop-read"]
-      }
-
-      template {
-        data = <<EOH
-	      MYSQL_ROOT_PASSWORD="{{with secret "secret/sockshop/databases/cataloguedb" }}{{.Data.pwd}}{{end}}"
-        EOH
-	      destination = "secrets/mysql_root_pwd.env"
-        env = true
-      }
-
       env {
         MYSQL_DATABASE = "socksdb"
-        MYSQL_ALLOW_EMPTY_PASSWORD = "false"
+        MYSQL_ALLOW_EMPTY_PASSWORD = "true"
       }
 
       service {

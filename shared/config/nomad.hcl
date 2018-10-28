@@ -13,14 +13,6 @@ consul {
   address = "IP_ADDRESS:8500"
 }
 
-vault {
-  enabled = true
-  address = "VAULT_URL"
-  task_token_ttl = "1h"
-  create_from_role = "nomad-cluster"
-  token = "TOKEN_FOR_NOMAD"
-}
-
 telemetry {
   publish_allocation_metrics = true
   publish_node_metrics       = true

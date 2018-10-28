@@ -1,26 +1,9 @@
 terraform {
-  required_version = ">= 0.11.7"
-}
-
-provider "vault" {
-  address = "${var.vault_url}"
-}
-
-data "vault_generic_secret" "aws_auth" {
-  path = "aws-tf/creds/deploy"
-}
-
-# Insert 15 second delay so AWS credentials definitely available
-# at all AWS endpoints
-data "external" "region" {
-  # Delay so that new keys are available across AWS
-  program = ["./delay-vault-aws", "${var.region}"]
+  required_version = ">= 0.11.10"
 }
 
 provider "aws" {
-  region = "${data.external.region.result["region"]}"
-  access_key = "${data.vault_generic_secret.aws_auth.data["access_key"]}"
-  secret_key = "${data.vault_generic_secret.aws_auth.data["secret_key"]}"
+  region = "${var.region}"
 }
 
 module "nomadconsul" {
@@ -39,8 +22,6 @@ module "nomadconsul" {
   cluster_tag_value = "${var.cluster_tag_value}"
   owner   = "${var.owner}"
   ttl     = "${var.ttl}"
-  token_for_nomad   = "${var.token_for_nomad}"
-  vault_url         = "${var.vault_url}"
 }
 
 resource "null_resource" "start_sock_shop" {

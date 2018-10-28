@@ -15,8 +15,6 @@ IP_ADDRESS=$(curl http://instance-data/latest/meta-data/local-ipv4)
 SERVER_COUNT=$1
 REGION=$2
 CLUSTER_TAG_VALUE=$3
-TOKEN_FOR_NOMAD=$4
-VAULT_URL=$5
 
 # Consul
 sed -i "s/IP_ADDRESS/$IP_ADDRESS/g" $CONFIGDIR/consul.json
@@ -33,8 +31,6 @@ export CONSUL_HTTP_ADDR=$IP_ADDRESS:8500
 # Nomad
 sed -i "s/IP_ADDRESS/$IP_ADDRESS/g" $CONFIGDIR/nomad.hcl
 sed -i "s/SERVER_COUNT/$SERVER_COUNT/g" $CONFIGDIR/nomad.hcl
-sed -i "s@VAULT_URL@$VAULT_URL@g" $CONFIGDIR/nomad.hcl
-sed -i "s/TOKEN_FOR_NOMAD/$TOKEN_FOR_NOMAD/g" $CONFIGDIR/nomad.hcl
 cp $CONFIGDIR/nomad.hcl $NOMADCONFIGDIR
 cp $CONFIGDIR/nomad_upstart.conf /etc/init/nomad.conf
 export NOMAD_ADDR=http://$IP_ADDRESS:4646
@@ -48,7 +44,6 @@ echo "search service.consul" | tee --append /etc/resolv.conf
 
 # Set env vars for tool CLIs
 echo "export CONSUL_HTTP_ADDR=$IP_ADDRESS:8500" | tee --append /home/$HOME_DIR/.bashrc
-echo "export VAULT_ADDR=$VAULT_URL" | tee --append /home/$HOME_DIR/.bashrc
 echo "export NOMAD_ADDR=http://$IP_ADDRESS:4646" | tee --append /home/$HOME_DIR/.bashrc
 
 # Start Docker

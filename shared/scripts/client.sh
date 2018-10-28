@@ -15,7 +15,6 @@ IP_ADDRESS=$(curl http://instance-data/latest/meta-data/local-ipv4)
 REGION=$1
 CLUSTER_TAG_VALUE=$2
 SERVER_IP=$3
-VAULT_URL=$4
 
 # Install Java
 apt-get update
@@ -51,7 +50,6 @@ echo "search service.consul" | tee --append /etc/resolv.conf
 
 # Set env vars for tool CLIs
 echo "export CONSUL_HTTP_ADDR=$IP_ADDRESS:8500" | tee --append /home/$HOME_DIR/.bashrc
-echo "export VAULT_ADDR=$VAULT_URL" | tee --append /home/$HOME_DIR/.bashrc
 echo "export NOMAD_ADDR=http://$IP_ADDRESS:4646" | tee --append /home/$HOME_DIR/.bashrc
 
 # Start Docker

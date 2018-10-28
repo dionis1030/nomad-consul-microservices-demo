@@ -15,11 +15,6 @@ consul {
   address = "IP_ADDRESS:8500"
 }
 
-vault {
-  enabled = true
-  address = "VAULT_URL"
-}
-
 telemetry {
   publish_allocation_metrics = true
   publish_node_metrics       = true

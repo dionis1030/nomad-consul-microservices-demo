@@ -9,8 +9,6 @@ variable "name_tag_prefix" {}
 variable "cluster_tag_value" {}
 variable "owner" {}
 variable "ttl" {}
-variable "token_for_nomad" {}
-variable "vault_url" {}
 variable "vpc_id" {}
 variable "subnet_id" {}
 
@@ -241,15 +239,6 @@ resource "aws_security_group_rule" "http_egress" {
     cidr_blocks = ["0.0.0.0/0"]
 }
 
-resource "aws_security_group_rule" "vault_egress" {
-    security_group_id = "${aws_security_group.primary.id}"
-    type = "egress"
-    from_port = 8200
-    to_port = 8200
-    protocol = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-}
-
 # Template File for Server
 data "template_file" "user_data_server_primary" {
   template = "${file("${path.root}/user-data-server.sh")}"
@@ -258,8 +247,6 @@ data "template_file" "user_data_server_primary" {
     server_count      = "${var.server_count}"
     region            = "${var.region}"
     cluster_tag_value = "${var.cluster_tag_value}"
-    token_for_nomad   = "${var.token_for_nomad}"
-    vault_url         = "${var.vault_url}"
   }
 }
 
@@ -271,7 +258,6 @@ data "template_file" "user_data_client" {
     region            = "${var.region}"
     cluster_tag_value = "${var.cluster_tag_value}"
     server_ip = "${aws_instance.primary.0.private_ip}"
-    vault_url         = "${var.vault_url}"
   }
 }
 

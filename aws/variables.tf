@@ -68,11 +68,3 @@ variable "ttl" {
   description = "Adds TTL tag to EC2 instances for reaping purposes. Reaping is only done for instances deployed by HashiCorp SEs. In any case, -1 means no reaping."
   default = "-1"
 }
-
-variable "token_for_nomad" {
-  description = "A Vault token for use by Nomad"
-}
-
-variable "vault_url" {
-  description = "URL of your Vault server including port"
-}
