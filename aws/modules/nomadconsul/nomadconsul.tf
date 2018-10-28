@@ -187,75 +187,21 @@ resource "aws_security_group_rule" "consul_dns_udp_egress" {
     source_security_group_id = "${aws_security_group.primary.id}"
 }
 
-resource "aws_security_group_rule" "docker_cluster_ingress" {
+resource "aws_security_group_rule" "nomad_dynamic_ports_ingress" {
     security_group_id = "${aws_security_group.primary.id}"
     type = "ingress"
-    from_port = 2375
-    to_port = 2377
+    from_port = 20000
+    to_port = 32000
     protocol = "tcp"
     source_security_group_id = "${aws_security_group.primary.id}"
 }
 
-resource "aws_security_group_rule" "docker_cluster_egress" {
+resource "aws_security_group_rule" "nomad_dynamic_ports_egress" {
     security_group_id = "${aws_security_group.primary.id}"
     type = "egress"
-    from_port = 2375
-    to_port = 2377
+    from_port = 20000
+    to_port = 32000
     protocol = "tcp"
-    source_security_group_id = "${aws_security_group.primary.id}"
-}
-
-resource "aws_security_group_rule" "docker_overlay_tcp_ingress" {
-    security_group_id = "${aws_security_group.primary.id}"
-    type = "ingress"
-    from_port = 7946
-    to_port = 7946
-    protocol = "tcp"
-    source_security_group_id = "${aws_security_group.primary.id}"
-}
-
-resource "aws_security_group_rule" "docker_overlay_tcp_egress" {
-    security_group_id = "${aws_security_group.primary.id}"
-    type = "egress"
-    from_port = 7946
-    to_port = 7946
-    protocol = "tcp"
-    source_security_group_id = "${aws_security_group.primary.id}"
-}
-
-resource "aws_security_group_rule" "docker_overlay_udp_ingress" {
-    security_group_id = "${aws_security_group.primary.id}"
-    type = "ingress"
-    from_port = 7946
-    to_port = 7946
-    protocol = "udp"
-    source_security_group_id = "${aws_security_group.primary.id}"
-}
-
-resource "aws_security_group_rule" "docker_overlay_udp_egress" {
-    security_group_id = "${aws_security_group.primary.id}"
-    type = "egress"
-    from_port = 7946
-    to_port = 7946
-    protocol = "udp"
-    source_security_group_id = "${aws_security_group.primary.id}"
-}
-
-resource "aws_security_group_rule" "docker_overlay_udp_4789_ingress" {
-    security_group_id = "${aws_security_group.primary.id}"
-    type = "ingress"
-    from_port = 4789
-    to_port = 4789
-    protocol = "udp"
-    source_security_group_id = "${aws_security_group.primary.id}"
-}
-
-resource "aws_security_group_rule" "docker_overlay_udp_4789_egress" {
-    security_group_id = "${aws_security_group.primary.id}"
-    type = "egress"
-    from_port = 4789
-    to_port = 4789
-    protocol = "udp"
     source_security_group_id = "${aws_security_group.primary.id}"
 }
 
