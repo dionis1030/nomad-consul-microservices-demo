@@ -106,8 +106,8 @@ In the Consul UI (http://<server_ip>:8500), do the following:
 1. Select the Intentions tab.
 1. Click the Create button.
 1. Select catalogue as the source and catalogue-db as the destination.
-1. For now, create an "allow" intention.
-1. Save the intention.
+1. For now, create an "Allow" intention.
+1. Click the Save button to save the intention.
 
 ## Step 11: Testing the Catalogue Application and Consul Connect
 You can now test the catalogue application using the curl commands below. First test with the intention you created set to Allow.  Then test with the intention set to Deny. You can run these curl commands from the Nomad server or the Nomad client. Note that Consul is doing service discovery in addition to service segmentation, resolving "catalogue" to "catalogue.service.consul" and determining which host the app is running on.
