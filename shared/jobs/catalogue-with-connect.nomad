@@ -84,6 +84,8 @@ job "catalouge-with-connect" {
       config {
         image = "rberlind/catalogue-db:latest"
         hostname = "catalogue-db.service.consul"
+        command = "docker-entrypoint.sh"
+        args = ["mysqld", "--bind-address", "127.0.0.1"]
         network_mode = "host"
         port_map = {
           http = 3306
@@ -125,7 +127,7 @@ job "catalouge-with-connect" {
           "-http-addr", "${NOMAD_IP_tcp}:8500",
           "-log-level", "trace",
           "-service", "catalogue-db",
-          "-service-addr", "${NOMAD_ADDR_cataloguedb_http}",
+          "-service-addr", "127.0.0.1:${NOMAD_PORT_cataloguedb_http}",
           "-listen", ":${NOMAD_PORT_tcp}",
           "-register",
         ]

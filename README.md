@@ -1,5 +1,14 @@
 # Running the Catalogue Nomad Consul Connect Demo
-The Catalogue Nomad Consul Connect Demo is derived from the Sock Shop microservices demo which illustrates how Nomad and Consul can be used to run and connect microservices.  This demo only uses the catalogue application and catalogue-db database from the broader demo, but adds Consul Connect in order to show how it can allow or deny connectivity between different services in a service mesh. The catalogue application is a go application, the catalogue-db runs MySQL, and both run inside Docker containers.
+The Catalogue Nomad Consul Connect Demo is derived from the Sock Shop microservices demo which illustrates how Nomad and Consul can be used to run and connect microservices.  This demo only uses the catalogue application and catalogue-db database from the broader demo, but adds two Consul Connect proxies in order to show how Consul Connect can allow or deny connectivity between different services in a service mesh. The catalogue application is a go application, the catalogue-db runs MySQL, and both run inside Docker containers.
+
+## What Talks to What
+Please note the following facts related to communications :
+1. The catalogue app tries to talk to the catalogue-db database on 127.0.0.1, forcing it to talk to the catalogueproxy.
+1. The catalogueproxy is configured to forward requests to the catalogue-db service.
+1. Knowing that the request to the catalogue-db service came from the upstream proxy, Consul will automatically forward it to the cataloguedbproxy rather than directly to the catalogue-db service itself.
+1. The cataloguedbproxy will forward the request to the catalogue-db service.
+1. The MySQL database is configured to only bind to 127.0.0.1 making it impossible for any application to connect to it using anything other than 127.0.0.1 or localhost. This means it is impossible for the catalogue app to talk directly to the catalogue-db database if running on a different server.
+1. Additionally, if we made the catalogue app talk to the catalogue-db database using the private IP address of the instance the database runs on, the requests would all fail.
 
 ## Reference Material
 You can learn more about the Sock Shop demo at the [Sock Shop](https://microservices-demo.github.io/).  A modified version of the original catalogue source code is in this [fork](https://github.com/rberlind/catalogue).
@@ -40,17 +49,17 @@ packer build packer.json
 cd ..
 ```
 
-Be sure to note the AMI ID of your new AMI. You will need to enter this in your Terraform variables in Step 5. If you generated this in a region other than us-east-1, then be sure to set the region variable in Step 4.
+Be sure to note the AMI ID of your new AMI. You will need to enter this in your Terraform variables in Step 4. If you generated this in a region other than us-east-1, then be sure to set the region variable in Step 4.
 
 ## Step 2: Create an AWS EC2 Key Pair (if needed)
 You need to use one of your AWS EC2 key pairs or [create](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2-key-pairs.html#having-EC2-create-your-key-pair) a new one. Please download your private key and copy it to the aws directory to make connecting to your EC2 instances easier in Step 6.
 
-## Step 3: Set Up and Configure Terraform Enterprise
+## Step 3: Set Up and Configure Terraform Enterprise (optional)
 1. If you do not already have a Terraform Enterprise (TFE) account, self-register for an evaluation at https://app.terraform.io/account/new.
 1. After getting access to your TFE account, create an organization for yourself. You might also want to review the [Getting Started](https://www.terraform.io/docs/enterprise/getting-started/index.html) documentation.
 1. Connect your TFE organization to GitHub. See the [Configuring Github Access](https://www.terraform.io/docs/enterprise/vcs/github.html)documentation.
 
-If you want to use open source Terraform instead of TFE, you can clone this repository locally, checkout the catalogue-connect branch with `git checkout catalogue-connect`, create a copy of the included terraform.tfvars.example file, calling it terraform.auto.tfvars, set values for the variables in it, run `terraform init`, and then run `terraform apply`.
+If you want to use open source Terraform instead of TFE, you can clone this repository locally, checkout the catalogue-connect branch with `git checkout catalogue-connect`, create a copy of the included terraform.tfvars.example file, calling it terraform.auto.tfvars, set values for the variables in it as directed in Step 4, run `terraform init`, and then run `terraform apply`.
 
 ## Step 4: Configure a Terraform Enterprise Workspace
 1. Fork this repository by clicking the Fork button in the upper right corner of the screen and selecting your own personal GitHub account or organization.
@@ -114,6 +123,7 @@ You can now test the catalogue application using the curl commands below. First 
 
 1. Run `curl -H "Content-Type: application/json" http://catalogue:8080/catalogue/3395a43e-2d88-40de-b95f-e00e1502085b | jq` to see the "colourful" socks from the catalogue. This should return:
 
+```
 {
   "id": "3395a43e-2d88-40de-b95f-e00e1502085b",
   "name": "Colourful",
@@ -129,16 +139,19 @@ You can now test the catalogue application using the curl commands below. First 
     "blue"
   ]
 }
+```
 
 1. In the Consul UI, click the "..." icon to the right of the intention you created and select "Edit".
 1. Change the intention from Allow to Deny and save it.
 1. Repeat the above curl command.  You should see the error below which proves that Consul Connect is now blocking the communication between the catalogue app and the catalogue-db database:
 
+```
 {
   "error": "Do: database connection error",
   "status_code": 500,
   "status_text": "Internal Server Error"
 }
+```
 
 If you change the intention back to Allow, the curl command will work again.
 
