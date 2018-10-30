@@ -1,4 +1,4 @@
-job "catalouge-with-connect" {
+job "catalogue-with-connect" {
   datacenters = ["dc1"]
 
   constraint {
