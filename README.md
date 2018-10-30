@@ -113,7 +113,7 @@ You can access the Consul UI by pointing your browser to http://<server_ip>:8500
 
 ![Screenshot](ConsulServices.png)
 
-## Step 10: Create Consul Connect Intentions
+## Step 10: Create a Consul Connect Intention
 In the Consul UI (http://<server_ip>:8500), do the following:
 1. Select the Intentions tab.
 1. Click the Create button.
@@ -124,7 +124,7 @@ In the Consul UI (http://<server_ip>:8500), do the following:
 ## Step 11: Testing the Catalogue Application and Consul Connect
 You can now test the catalogue application using the curl commands below. First test with the intention you created set to Allow.  Then test with the intention set to Deny. You can run these curl commands from the Nomad server or the Nomad clients. Note that Consul is doing service discovery in addition to service segmentation, resolving "catalogue" to "catalogue.service.consul" and determining which host the app is running on.
 
-1. Run `curl -H "Content-Type: application/json" http://catalogue:8080/catalogue/3395a43e-2d88-40de-b95f-e00e1502085b | jq` to see the "colourful" socks from the catalogue. This should return:
+Run `curl -H "Content-Type: application/json" http://catalogue:8080/catalogue/3395a43e-2d88-40de-b95f-e00e1502085b | jq` to see the "colourful" socks from the catalogue. This should return:
 
 ```
 {
@@ -144,11 +144,12 @@ You can now test the catalogue application using the curl commands below. First 
 }
 ```
 
-1. In the Consul UI, click the "..." icon to the right of the intention you created and select "Edit".
-1. Change the intention from Allow to Deny and save it.
+In the Consul UI, click the "..." icon to the right of the intention you created and select "Edit".
+Change the intention from Allow to Deny and save it.
+
 ![Screenshot](ConsulIntention.png)
 
-1. Repeat the above curl command.  You should see the error below which proves that Consul Connect is now blocking the communication between the catalogue app and the catalogue-db database:
+Repeat the above curl command.  You should see the error below which proves that Consul Connect is now blocking the communication between the catalogue app and the catalogue-db database:
 
 ```
 {
