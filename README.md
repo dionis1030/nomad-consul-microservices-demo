@@ -144,9 +144,7 @@ Run `curl -H "Content-Type: application/json" http://catalogue:8080/catalogue/33
 }
 ```
 
-In the Consul UI, click the "..." icon to the right of the intention you created and select "Edit".
-
-Change the intention from Allow to Deny and save it.
+In the Consul UI, select the intention you created and change the intention from Allow to Deny and save it.
 
 ![Screenshot](ConsulIntention.png)
 
