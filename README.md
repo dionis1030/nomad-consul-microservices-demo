@@ -11,7 +11,7 @@ Please note the following facts related to communications :
 1. Additionally, if we made the catalogue app talk to the catalogue-db database using the private IP address of the instance the database runs on, the requests would all fail.
 1. Finally, we are using Nomad's distinct_hosts constraint to run the catalogue app and catalogue-db database on different EC2 instances.
 
-Together, all the above points guarantee that the catalogue app can only talk to the catalogue-db database through the Consul Connect proxies, but only if there is no Deny intention prohibiting this. 
+Together, all the above points guarantee that the catalogue app can only talk to the catalogue-db database through the Consul Connect proxies, but only if there is no Deny intention prohibiting this.
 
 ## Reference Material
 You can learn more about the Sock Shop demo at the [Sock Shop](https://microservices-demo.github.io/).  A modified version of the original catalogue source code is in this [fork](https://github.com/rberlind/catalogue).
@@ -111,7 +111,7 @@ You can access the Nomad UI by pointing your browser to http://<server_ip>:4646,
 ## Step 9: Check the Services with the Consul UI
 You can access the Consul UI by pointing your browser to http://<server_ip>:8500, replacing \<server_ip\> with the public IP address of one of your servers . You can verify that the catalogue services and the cataloguedbproxy proxy are registered with Consul. You will not see the catalogueproxy since it is intentionally not registered as a Consul service since it is only serving as an upstream proxy for the catalogue app.
 
-![Screenshot](ConsulUI.png)
+![Screenshot](ConsulServices.png)
 
 ## Step 10: Create Consul Connect Intentions
 In the Consul UI (http://<server_ip>:8500), do the following:
@@ -120,6 +120,8 @@ In the Consul UI (http://<server_ip>:8500), do the following:
 1. Select catalogue as the source and catalogue-db as the destination.
 1. For now, create an "Allow" intention.
 1. Click the Save button to save the intention.
+
+![Screenshot](ConsulIntention.png)
 
 ## Step 11: Testing the Catalogue Application and Consul Connect
 You can now test the catalogue application using the curl commands below. First test with the intention you created set to Allow.  Then test with the intention set to Deny. You can run these curl commands from the Nomad server or the Nomad clients. Note that Consul is doing service discovery in addition to service segmentation, resolving "catalogue" to "catalogue.service.consul" and determining which host the app is running on.
