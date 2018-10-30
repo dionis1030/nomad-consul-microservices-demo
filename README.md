@@ -9,6 +9,9 @@ Please note the following facts related to communications :
 1. The cataloguedbproxy will forward the request to the catalogue-db service.
 1. The MySQL database is configured to only bind to 127.0.0.1 making it impossible for any application to connect to it using anything other than 127.0.0.1 or localhost. This means it is impossible for the catalogue app to talk directly to the catalogue-db database if running on a different server.
 1. Additionally, if we made the catalogue app talk to the catalogue-db database using the private IP address of the instance the database runs on, the requests would all fail.
+1. Finally, we are using Nomad's distinct_hosts constraint to run the catalogue app and catalogue-db database on different EC2 instances.
+
+Together, all the above points guarantee that the catalogue app can only talk to the catalogue-db database through the Consul Connect proxies, but only if there is no Deny intention prohibiting this. 
 
 ## Reference Material
 You can learn more about the Sock Shop demo at the [Sock Shop](https://microservices-demo.github.io/).  A modified version of the original catalogue source code is in this [fork](https://github.com/rberlind/catalogue).
