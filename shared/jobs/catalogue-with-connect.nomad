@@ -6,10 +6,16 @@ job "catalouge-with-connect" {
     value = "linux"
   }
 
+  constraint {
+    operator = "distinct_hosts"
+    value = "true"
+  }
+
   update {
     stagger = "10s"
     max_parallel = 1
   }
+
 
   # - catalogue - #
   group "catalogue" {
@@ -76,6 +82,18 @@ job "catalouge-with-connect" {
         }
       }
     } # - end catalogue upstream proxy - #
+  } # end catalogue group
+
+  # - catalogue - #
+  group "cataloguedb" {
+    count = 1
+
+    restart {
+      attempts = 10
+      interval = "5m"
+      delay = "25s"
+      mode = "delay"
+    }
 
     # - db - #
     task "cataloguedb" {
@@ -139,5 +157,5 @@ job "catalouge-with-connect" {
         }
       }
     } # - end cataloguedbproxy - #
-  } # - end catalogue - #
+  } # - end cataloguedb group - #
 }

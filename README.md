@@ -39,7 +39,7 @@ Please execute the following commands and instructions to configure your Vault s
 ## Step 1: Create a New AMI with Packer (optional)
 You can now use Packer and Terraform to provision your AWS EC2 instances along with other AWS infrastructure.
 
-We have already used Packer to create Amazon Machine Image ami-0c274cd69af4800f2 which uses Nomad 0.8.6 and Consul 1.3.0. You can use this as the basis for your EC2 instances. This AMI only exists in the AWS us-east-1 region. If you want to create a similar AMI in a different region or if you make any changes to any of the files in the shared directory, you will need to create your own AMI with Packer. This is very simple. Starting from the home directory, do the following (being sure to specify the region and a vaid source_ami for that region in packer.json if the region is different from us-east-1):
+We have already used Packer to create Amazon Machine Image ami-0826fa9bac2e9aae2 which uses Nomad 0.8.6 and Consul 1.3.0. You can use this as the basis for your EC2 instances. This AMI only exists in the AWS us-east-1 region. If you want to create a similar AMI in a different region or if you make any changes to any of the files in the shared directory, you will need to create your own AMI with Packer. This is very simple. Starting from the home directory, do the following (being sure to specify the region and a vaid source_ami for that region in packer.json if the region is different from us-east-1):
 
 ```
 export AWS_ACCESS_KEY_ID=<your_aws_key>
@@ -73,16 +73,16 @@ If you want to use open source Terraform instead of TFE, you can clone this repo
 1. HashiCorp SEs should also set the owner and ttl variables which are used by the AWS Lambda reaper function that terminates old EC2 instances.
 1. Set the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY environment variables to your AWS access and secret keys.
 
-Now, you're ready to use Terraform to provision your EC2 instances with the Nomad and Consul servers and clients.  The default configuration creates 1 Server instance running Nomad and Consul servers and 1 Client instance running Nomad and Consul clients. Your catalogue app and catalogue-db database will be deployed by Nomad as Docker containers to the Client instance.
+Now, you're ready to use Terraform to provision your EC2 instances with the Nomad and Consul servers and clients.  The default configuration creates 1 server instance running Nomad and Consul servers and 2 client instances running Nomad and Consul clients. Your catalogue app and catalogue-db database will be deployed by Nomad as Docker containers to the client instances. The Nomad distinct_hosts constraint is used to run them on distinct clients. (That is why we run two clients.)
 
 If desired, you can set the vpc_cidr and subnet_cidr to valid CIDR ranges. The defaults are "10.0.0.0/16" and "10.0.1.0/24" respectively.
 
 ## Step 5: Provision the Nomad Consul Connect Demo
 1. Click the "Queue Plan" button in the upper right corner of your workspace.
-1. On the Current Run tab, you should see a new run. If the plan succeeds, you can view the plan and verify that the AWS infrastructure including the Nomad/Consul server and client will be created when you apply your plan.
+1. On the Current Run tab, you should see a new run. If the plan succeeds, you can view the plan and verify that the AWS infrastructure including the Nomad/Consul server and clients will be created when you apply your plan.
 1. Click the "Confirm and Apply" button to actually provision everything.
 
-When the apply finishes, you should see a message giving the public and private IP addresses for your server and client instances along with a command to ssh to your server and URLs to access the Nomad and Consul UIs.  In your AWS console, you should be able to see all your instances under EC2 Instances. If you were already on that screen, you'll need to refresh it.
+When the apply finishes, you should see a message giving the public and private IP addresses for your server and clients instances along with a command to ssh to your server and URLs to access the Nomad and Consul UIs.  In your AWS console, you should be able to see all your instances under EC2 Instances. If you were already on that screen, you'll need to refresh it.
 
 Note that Nomad and Consul will automatically be started and that Nomad will run the catalogue-with-connect job.
 
@@ -98,7 +98,7 @@ Verify that Nomad is running with `ps -ef | grep nomad`. You should see "/usr/lo
 ## Step 7: Verify the Deployment
 The demo will automatically launch the catalogue app and Catalogue-db database and associated Consul Connect proxies using the command `nomad job run catalogue-with-connect.nomad`. You do not need to run these yourself.
 
-You can check the status of the sockshop jobs on any of the servers or clients by running `nomad job status catalogue-with-connect`.  All tasks should be running. You can also see job and task status in the Nomad UI and even view the task logs in the UI.
+You can check the status of the sockshop jobs on the server or clients by running `nomad job status catalogue-with-connect`.  All tasks should be running. You can also see job and task status in the Nomad UI and even view the task logs in the UI.
 
 ## Step 8: Check the Running Tasks with the Nomad UI
 You can access the Nomad UI by pointing your browser to http://<server_ip>:4646, replacing \<server_ip\> with the public IP address of one of your servers. You can verify that the catalogue microservices and proxies are running as Nomad tasks.
@@ -119,7 +119,7 @@ In the Consul UI (http://<server_ip>:8500), do the following:
 1. Click the Save button to save the intention.
 
 ## Step 11: Testing the Catalogue Application and Consul Connect
-You can now test the catalogue application using the curl commands below. First test with the intention you created set to Allow.  Then test with the intention set to Deny. You can run these curl commands from the Nomad server or the Nomad client. Note that Consul is doing service discovery in addition to service segmentation, resolving "catalogue" to "catalogue.service.consul" and determining which host the app is running on.
+You can now test the catalogue application using the curl commands below. First test with the intention you created set to Allow.  Then test with the intention set to Deny. You can run these curl commands from the Nomad server or the Nomad clients. Note that Consul is doing service discovery in addition to service segmentation, resolving "catalogue" to "catalogue.service.consul" and determining which host the app is running on.
 
 1. Run `curl -H "Content-Type: application/json" http://catalogue:8080/catalogue/3395a43e-2d88-40de-b95f-e00e1502085b | jq` to see the "colourful" socks from the catalogue. This should return:
 
