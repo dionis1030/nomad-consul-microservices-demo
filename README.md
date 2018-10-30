@@ -42,7 +42,7 @@ Please execute the following commands and instructions to configure your Vault s
 ## Step 1: Create a New AMI with Packer (optional)
 You can now use Packer and Terraform to provision your AWS EC2 instances along with other AWS infrastructure.
 
-We have already used Packer to create Amazon Machine Image ami-0826fa9bac2e9aae2 which uses Nomad 0.8.6 and Consul 1.3.0. You can use this as the basis for your EC2 instances. This AMI only exists in the AWS us-east-1 region. If you want to create a similar AMI in a different region or if you make any changes to any of the files in the shared directory, you will need to create your own AMI with Packer. This is very simple. Starting from the home directory, do the following (being sure to specify the region and a vaid source_ami for that region in packer.json if the region is different from us-east-1):
+We have already used Packer to create Amazon Machine Image ami-003ed29221ce4a111 which uses Nomad 0.8.6 and Consul 1.3.0. You can use this as the basis for your EC2 instances. This AMI only exists in the AWS us-east-1 region. If you want to create a similar AMI in a different region or if you make any changes to any of the files in the shared directory, you will need to create your own AMI with Packer. This is very simple. Starting from the home directory, do the following (being sure to specify the region and a vaid source_ami for that region in packer.json if the region is different from us-east-1):
 
 ```
 export AWS_ACCESS_KEY_ID=<your_aws_key>
@@ -121,8 +121,6 @@ In the Consul UI (http://<server_ip>:8500), do the following:
 1. For now, create an "Allow" intention.
 1. Click the Save button to save the intention.
 
-![Screenshot](ConsulIntention.png)
-
 ## Step 11: Testing the Catalogue Application and Consul Connect
 You can now test the catalogue application using the curl commands below. First test with the intention you created set to Allow.  Then test with the intention set to Deny. You can run these curl commands from the Nomad server or the Nomad clients. Note that Consul is doing service discovery in addition to service segmentation, resolving "catalogue" to "catalogue.service.consul" and determining which host the app is running on.
 
@@ -148,6 +146,8 @@ You can now test the catalogue application using the curl commands below. First 
 
 1. In the Consul UI, click the "..." icon to the right of the intention you created and select "Edit".
 1. Change the intention from Allow to Deny and save it.
+![Screenshot](ConsulIntention.png)
+
 1. Repeat the above curl command.  You should see the error below which proves that Consul Connect is now blocking the communication between the catalogue app and the catalogue-db database:
 
 ```
