@@ -16,13 +16,13 @@ Together, all the above points guarantee that the catalogue app can only talk to
 ## Reference Material
 You can learn more about the Sock Shop demo at the [Sock Shop](https://microservices-demo.github.io/).  A modified version of the original catalogue source code is in this [fork](https://github.com/rberlind/catalogue).
 
-The instructions below describe how you can run and connect the Sock Shop microservices in AWS using [Nomad](https://www.nomadproject.io/) and [Consul](https://www.consul.io). Additionally, [Packer](https://www.packer.io) was used to build the AWS AMI that runs Nomad, Consul, and the microservices, while [Terraform](https://www.terraform.io) is used to provision the AWS infrastructure (including a VPC and public subnet and EC2 instances).
+The instructions below describe how you can run and connect the Sock Shop catalogue and catalogue-db microservices in AWS using [Nomad](https://www.nomadproject.io/) and [Consul](https://www.consul.io). Additionally, [Packer](https://www.packer.io) was used to build the AWS AMI that runs Nomad, Consul, and the microservices, while [Terraform](https://www.terraform.io) is used to provision the AWS infrastructure (including a VPC and public subnet and EC2 instances).
 
 ## Estimated Time to Complete
 15 minutes
 
 ## Personas
-Our target persona is a developer who wants to run microservices with Nomad and connect them with Consul while also using Consul Connect to control whether the catalogue application is allowed to talk to its database.
+Our target persona is a developer who wants to run microservices with Nomad and connect them securely with Consul Connect.
 
 ## Challenge
 Microservices such as the Sock Shop microservices can be deployed to multiple platforms, but securing the connectivity between them has been difficult to manage.
@@ -37,7 +37,7 @@ In order to deploy the Sock Shop demo to AWS, you will need an AWS account. You 
 If you want to customize the AMI used by the demo, you will need to download and install Packer locally from [Packer Downloads](https://www.packer.io/downloads.html). You can use Terraform Enterprise or open source Terraform to provision the AWS infrastructure the demo runs on. If you want to use open source Terraform, install it from [Terraform Downloads](https://www.terraform.io/downloads.html). This demo was built and tested with Packer 1.3.1 and Terraform 0.11.10.
 
 ## Steps
-Please execute the following commands and instructions to configure your Vault server, deploy the AWS infrastructure, and run the microservices with Nomad.
+Please execute the following commands and instructions to deploy the AWS infrastructure and run the catalogue microservices with Nomad.
 
 ## Step 1: Create a New AMI with Packer (optional)
 You can now use Packer and Terraform to provision your AWS EC2 instances along with other AWS infrastructure.
